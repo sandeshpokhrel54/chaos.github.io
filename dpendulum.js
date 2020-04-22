@@ -1,3 +1,9 @@
+//random function
+function random(min,max)
+{
+    return (Math.floor(Math.random() * (max - min + 1 )) + min);
+}
+
 // setup canvas
 const canvas = document.querySelector('canvas');
 const ctx = canvas.getContext('2d');
@@ -7,9 +13,11 @@ const height = canvas.height = window.innerHeight;
 
 let pivx = width/2;
 let pivy = height/4;
-let g = 1;
+let g = 2;
 function dpendulum(angle1,angle2)
 {
+    this.color = 'rgb(' + random(0,255) + ',' + random(0,255) + ',' + random(0,255) +')' ;
+
     //first bob
     this.mass1 = 20;
     this.string1 = 199;
@@ -35,13 +43,15 @@ dpendulum.prototype.draw = function()
 {
     ctx.beginPath();
     //bob1
-    ctx.fillStyle = 'yellow';
+    ctx.fillStyle = this.color;
     ctx.arc(this.bob1posx,this.bob1posy,10,0,2*Math.PI);
     ctx.fill();
     //bob2
     ctx.arc(this.bob2posx,this.bob2posy,10,0,2*Math.PI);
     ctx.fill();
     ctx.beginPath();
+    if (!hide)
+    {
     //string1
     ctx.moveTo(pivx,pivy);
     ctx.lineTo(this.bob1posx,this.bob1posy);
@@ -49,17 +59,19 @@ dpendulum.prototype.draw = function()
     ctx.moveTo(this.bob1posx,this.bob1posy);
     ctx.lineTo(this.bob2posx,this.bob2posy);
     //color the string
-    ctx.strokeStyle = 'green';
+    ctx.strokeStyle = 'yellow';
     ctx.stroke();
+    }
     
 }
 
 dpendulum.prototype.update = function()
 {
+
+    //using formula to calculate angular acceleration,angular velocity and angles
+
     let theta1 = this.angle1;
     let theta2 = this.angle2;
-    
-    
     let num1 = - g * (2 * this.mass1 + this.mass2) * Math.sin(theta1) ;  
     let num2 = - this.mass2 * g * Math.sin(theta1 - 2 * theta2 );
     let num3 = - 2 * Math.sin(theta1 - theta2) * this.mass2 ;
@@ -87,20 +99,65 @@ dpendulum.prototype.update = function()
 
 }
 
-let bobs = new dpendulum(90,45); //angles provided in degrees
+
+let booli = true;
+let hide = false;
+
+const many = document.querySelector('h1');
+
+let bob = new dpendulum(90,45); //angles provided in degrees
+let bobs = [];
+
+manyStart = function()
+{    
+    many.textContent = "Sensitive Dependence on initial conditions(click to show/hide strings)";
+    let bobby;
+    for (let i = 0; i<3 ; i++)
+    {
+        bobby = new dpendulum(90,i+45);  // each ball only slightly different position from another 
+        bobs.push(bobby);
+    }
+
+    booli = false;
+    removeEventListener('click',manyStart);
+    addEventListener('click',Hidestrings);
+}
+
+Hidestrings = function()
+{
+    if (hide)
+        hide = false;
+    else
+        hide = true;
+}
+    
+addEventListener('click',manyStart);
+
+
 
 function loop()
 {
     ctx.fillStyle = 'rgba(0,0,0,1)';
     ctx.fillRect(0,0,width,height);
 
-    bobs.draw();
     
-    bobs.update();
+    if (booli)
+    {
+        bob.draw();
+        bob.update();
+    }
+
+    else
+    {
+        for(let j=0 ; j<bobs.length;j++)
+        {
+            bobs[j].draw();
+            bobs[j].update();
+        }
+    }
 
     requestAnimationFrame(loop);
 
 }
 loop();
-
 
