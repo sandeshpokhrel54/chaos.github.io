@@ -110,26 +110,22 @@ dpendulum.prototype.update = function()
 }
 
 
-let booli = true;
 let hide = false;
 
-const many = document.querySelector('h1');
 
-let bob = new dpendulum(90,45); //angles provided in degrees
 let bobs = [];
-
-manyStart = function()
+let  slider = document.querySelector('.slider');
+let PNumber = slider.value;
+Start = function()
 {    
-    many.textContent = "Sensitive Dependence on initial conditions(click to show/hide strings)";
+    bobs = [];
     let bobby;
-    for (let i = 0; i<3 ; i++)
+    for (let i = 0; i<PNumber ; i++)
     {
         bobby = new dpendulum(90,i+45);  // each ball only slightly different position from another 
         bobs.push(bobby);
     }
 
-    booli = false;
-    removeEventListener('click',manyStart);
     addEventListener('click',Hidestrings);
 }
 
@@ -141,44 +137,41 @@ Hidestrings = function()
         hide = true;
 }
     
-addEventListener('click',manyStart);
 
 const DRAW_TRAIL =true;
+//initializing bobs
+
+Start();
+slider.oninput = function(){
+    PNumber = this.value;
+    Start();
+}
+
 
 function loop()
 {
-    ctx.fillStyle = 'rgba(0,0,0,1)';
+   ctx.fillStyle = 'rgba(0,0,0,1)';
     ctx.fillRect(0,0,width,height);
-
     
-    if (booli)
+    for(let j=0 ; j<bobs.length;j++)
     {
-        bob.draw();
-        bob.update();
-    }
+        bobs[j].draw();
+        bobs[j].update();
+    
 
-    else
-    {
-        for(let j=0 ; j<bobs.length;j++)
+        if(DRAW_TRAIL)
         {
-            bobs[j].draw();
-            bobs[j].update();
+            ctx.beginPath();
+            ctx.strokeStyle = '#FCBA12';
+            ctx.moveTo(bobs[j].history[0][0], bobs[j].history[0][1]);
+            for(const point of bobs[j].history)
+                {
+                    ctx.lineTo(point[0], point[1]);
+    
+                }
+                ctx.stroke();
         }
     }
-    
-    if(DRAW_TRAIL)
-    {
-        ctx.beginPath();
-        ctx.strokeStyle = '#FCBA12';
-        ctx.moveTo(bob.history[0][0], bob.history[0][1]);
-        for(const point of bob.history)
-            {
-                ctx.lineTo(point[0], point[1]);
-
-            }
-        ctx.stroke();
-    }
-
 
     requestAnimationFrame(loop);
 
