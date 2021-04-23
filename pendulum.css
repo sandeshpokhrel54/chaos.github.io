@@ -1,26 +1,9 @@
-html, body {
-    margin: 0;
-  }
-  
-  html {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    height: 100%;
-  }
-  
-  body {
-    overflow: hidden;
-    height: inherit;
-  }
-  
-  h1 {
-    font-size: 2rem;
-    letter-spacing: -1px;
-    position: absolute;
-    margin: 0;
-    margin-top: 5px;
-    top: -4px;
-    right: 5px;
-  
-    color: solid;
-    text-shadow: 2px 2px 4px #bb0a1e;
-  }
+html{
+  background:#66b032 ;
+}
+
+h1{
+  text-align: center;
+  color:#b2d732;
+  width: 100%;
+}
