@@ -148,33 +148,51 @@ slider.oninput = function(){
 }
 
 
+let lastDate = new Date();
+let elaspedTime=0;
 function loop()
 {
    ctx.fillStyle = 'rgba(0,0,0,1)';
     ctx.fillRect(0,0,width,height);
     
-    for(let j=0 ; j<bobs.length;j++)
-    {
-        bobs[j].draw();
-        bobs[j].update();
-    
+    //calc fps
+    let thisDate = new Date();
+    elaspedTime += (thisDate.getMilliseconds() - lastDate.getMilliseconds());
+    // let devicefps = 1000/(thisDate.getMilliseconds() - lastDate.getMilliseconds());
+    // console.log(devicefps)
+    lastDate = thisDate;
+    // console.log(elaspedTime);
 
-        if(DRAW_TRAIL)
+    //update in certain time interval only
+    if(Math.abs(elaspedTime) > 15){
+        elaspedTime=0
+
+        //drawing bobs
+        for(let j=0 ; j<bobs.length;j++)
         {
-            ctx.beginPath();
-            ctx.strokeStyle = '#FCBA12';
-            ctx.moveTo(bobs[j].history[0][0], bobs[j].history[0][1]);
-            for(const point of bobs[j].history)
-                {
-                    ctx.lineTo(point[0], point[1]);
-    
-                }
-                ctx.stroke();
+            bobs[j].draw();
+            bobs[j].update();
+        
+            if(DRAW_TRAIL)
+            {
+                ctx.beginPath();
+                ctx.strokeStyle = '#FCBA12';
+                ctx.moveTo(bobs[j].history[0][0], bobs[j].history[0][1]);
+                for(const point of bobs[j].history)
+                    {
+                        ctx.lineTo(point[0], point[1]);
+        
+                    }
+                    ctx.stroke();
+            }
         }
     }
 
-    requestAnimationFrame(loop);
-
+    requestAnimationFrame(loop)
+    
+        
 }
+
 loop();
+
 
